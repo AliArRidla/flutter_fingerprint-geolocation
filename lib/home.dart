@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var latitude, longitude;
   @override
   Widget build(BuildContext context) {
     String location = 'Belum Mendapatkan Lat dan long, Silahkan tekan button';
@@ -133,7 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
     void initState() {
       _checkBiometric();
       _getAvailableBiometric();
-
       super.initState();
     }
 
@@ -170,10 +170,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 30,
                   ),
                   SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Latitude  : $latitude"),
+                        Text("Longitude : $longitude"),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: CupertinoButton(
                       color: Colors.green,
-                      onPressed: _authenticate,
+                      // onPressed: _authenticate,
+                      onPressed: () async {
+                        Position position = await _getGeoLocationPosition();
+                        setState(() {
+                          latitude = position.latitude;
+                          longitude = position.longitude;
+                          if (latitude != null && longitude != null) {
+                            _authenticate();
+                          }
+                        });
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
